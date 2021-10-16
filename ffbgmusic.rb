@@ -15,13 +15,19 @@ a_sane = a.gsub(/[^\w\d.]/, '_')
 
 
 cmd=[]
-cmd<< "ffmpeg"
-cmd<< "-i '#{v}'"
-cmd<< "-i '#{a}'"
-# cmd<< "-filter_complex '[0:a][1:a]amerge=inputs=2[a]'"
-cmd<< "-filter_complex '[0:a][1:a]amix=inputs=2[a]'"
-cmd<< "-map 0:v -map '[a]'"
-cmd<< '-c:v copy -ac 2 -shortest'
-cmd<< "#{a_sane}_#{v_sane}"
-p cmd * ' '
-IO.popen(cmd.join(' '), &:read)
+cmd=<<~FFMPEG 
+	ffmpeg
+	-i '#{v}'
+	-i '#{a}'
+	-filter_complex '[0:a][1:a]amix=inputs=2[a]'
+	-map 0:v -map '[a]'
+	-c:v copy
+  -ac 2 
+  -shortest
+	#{a_sane}_#{v_sane}
+FFMPEG
+
+cmd.gsub!(/\n/,' ')
+# puts cmd.strip
+choice=%w[yes no].fzf(cmd: %(fzf --prompt="#{cmd}")).first
+IO.popen(cmd, &:read) if choice=='yes'

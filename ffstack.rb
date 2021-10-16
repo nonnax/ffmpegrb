@@ -22,9 +22,9 @@ cuts = cuts_df.map # shared
 # 426 x 240 (or 240p)
 # 320 x 240 (or 240p)
 
-scale=%w[320 426 640 720 854].fzf.first
+# scale=%w[320 426 640 720 854].fzf.first
 
-scale=640 unless scale
+scale=640 #unless scale
 
 cmd=[]
 cmd<<'ffmpeg'
@@ -41,14 +41,14 @@ filter=[
 	%([3:v]scale=#{scale}:-1[v3]),
 	%([v0][v1]hstack=inputs=2:shortest=1[top]),
   %([v2][v3]hstack=inputs=2:shortest=1[bot]),
-  %([top][bot]vstack=inputs=2:shortest=1[v]),
+  %([top][bot]vstack=inputs=2:shortest=1,scale=1280:720[v]),
  ].join(';')
 
 cmd<<%(-filter_complex '#{filter}') 
 cmd<<%(-map "[v]") 
 cmd<<%(-map "[a]") 
 cmd<<%(-ac 2) 
-cmd<<"stacked-#{sane_name}"
+cmd<<"stacked_#{sane_name}"
 
 p cmd
 

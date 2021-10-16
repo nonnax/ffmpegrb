@@ -5,23 +5,21 @@
 
 text=[]
 
-# ENV["fs"].each_line do |f|
-	# text<< %(file '#{f.chomp}')
-# end
-
 ENV["fs"].split("\n").each  do |f|
 	text << %(file '#{f}')
 end
 
 IO.write( 'concat.txt', text.join("\n") )
-cmd = []
-cmd <<"ffmpeg"
-cmd <<"-f concat"
-cmd <<"-safe 0"
-cmd <<"-i concat.txt"
-cmd <<"-c copy"
-# cmd <<"-avoid_negative_ts default"
-cmd <<"-avoid_negative_ts make_zero"
-cmd <<"out-concat.mp4"
 
-IO.popen(cmd.join(' '), &:read)
+cmd=<<~FFMPEG
+	ffmpeg
+	-f concat
+	-safe 0
+	-i concat.txt
+	-c copy
+	concat_#{Time.now.to_i}.mp4
+FFMPEG
+
+cmd.gsub!(/\n/, ' ')
+
+IO.popen(cmd, &:read)

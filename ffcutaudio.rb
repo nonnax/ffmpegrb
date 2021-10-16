@@ -19,9 +19,10 @@ cuts = cuts_df.map # shared
 cuts.each_with_index do |(ss, to), i|
 	cmd = []
 	cmd << 'ffmpeg'
-  cmd << "-ss #{ss} -to #{to} -i '#{inf}'"
+  cmd << "-ss #{ss} -i '#{inf}' -to #{to}"
 	cmd << '-vn'
 	cmd << '-c copy'
+	cmd << '-avoid_negative_ts make_zero'
 	cmd << "'seg_%s_%s'" % [ss.tr(':', '_'), sane_name]
 
 	p cmd_str = cmd * ' '

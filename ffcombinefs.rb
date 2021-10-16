@@ -1,24 +1,26 @@
 #!/usr/bin/env ruby
 # Id$ nonnax 2021-10-10 22:56:31 +0800
 # Used with lf file manager file selections
-#	select pairs of axx.mp3 vxx.mp4 sequentially numbered files to merge
+#	merges video and audio selections. 
+# file selections are sequential pairs of vxx.mp4 and axxx.mp3, prefix with (v) and (a)
 
 def combine(v, a)
-	cmd=[]
-	cmd<<"ffmpeg"
-	cmd<<"-i '#{v}'"
-	cmd<<"-i '#{a}'"
-	cmd<<"-c copy -map 0:0 -map 1:0"
-	cmd<<"-shortest"
-	cmd<<"#{v}#{a}.mp4"
-
-	IO.popen(cmd.join(' '), &:read)
+	cmd=<<~FFMPEG
+		ffmpeg
+		-i '#{v}'
+		-i '#{a}'
+		-c copy -map 0:0 -map 1:0
+		-shortest
+	  '#{v}_#{a}.mp4'
+	FFMPEG
+	cmd.gsub!(/\n/, ' ')
+	IO.popen(cmd, &:read)
 end
 
 a=[]
 
 ENV['fs'].split("\n").map{|e|
-	basename=e.split(%r(/)).last
+	basename=e.split(%r[/]).last
 	a<<basename 
 }
 

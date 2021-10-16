@@ -8,14 +8,15 @@ require 'fzf'
 delay = ARGV.first.to_i
 inf = Dir['*.*'].fzf.first
 
-cmd = []
-cmd << 'ffmpeg'
-cmd << "-i #{inf}"
-cmd << "-itsoffset #{delay}"
-cmd << "-i #{inf}"
-cmd << '-codec copy'
-cmd << '-map 0:0 -map 1:1' # 0:video 1:audio
-cmd << "out-#{inf}"
+cmd=<<~FFMPEG
+	ffmpeg
+	-i #{inf}
+	-itsoffset #{delay}
+	-i #{inf}
+	-codec copy
+	-map 0:0 -map 1:1
+	out-#{inf}
+FFMPEG
 
-p cmd_str = cmd * ' '
-IO.popen(cmd_str, &:read)
+cmd.gsub!(/\n/, ' ')
+IO.popen(cmd, &:read)
