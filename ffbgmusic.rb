@@ -24,7 +24,7 @@ cmd=<<~FFMPEG
 	-c:v copy
   -ac 2 
   -shortest
-	#{a_sane}_#{v_sane}
+	vbg_#{a_sane}_#{v_sane}
 FFMPEG
 
 cmd.gsub!(/\n/,' ')

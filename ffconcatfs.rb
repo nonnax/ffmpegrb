@@ -17,7 +17,7 @@ cmd=<<~FFMPEG
 	-safe 0
 	-i concat.txt
 	-c copy
-	concat_#{Time.now.to_i}.mp4
+	vcat_#{Time.now.to_i}.mp4
 FFMPEG
 
 cmd.gsub!(/\n/, ' ')

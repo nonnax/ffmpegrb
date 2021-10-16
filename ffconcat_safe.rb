@@ -17,7 +17,7 @@ cmd=<<~FFMPEG
 	-filter_complex
 	"[0:v] [0:a] [1:v] [1:a] concat=n=2:v=1:a=1 [v] [a]"
 	-map [v] -map [a] -y 
-	out_concat_filter.mp4
+	vcat_filter#{Time.now.to_i}.mp4
 FFMPEG
 
 cmd.gsub!(/\n/, ' ')

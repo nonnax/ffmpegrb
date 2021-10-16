@@ -24,7 +24,7 @@ cuts.each_with_index do |(ss, to), i|
 	# cmd << '-c:v libx264 -crf 18 -preset veryslow'
 	# cmd<< '-vf mp=eq2=1:1.68:0.3:1.25:1:0.96:1'
 	cmd << '-avoid_negative_ts make_zero'
-	cmd << "'seg_%s_%s'" % [ss.tr(':', '_'), sane_name]
+	cmd << "'vseg_%s_%s'" % [ss.tr(':', '_'), sane_name]
 	p cmd_str = cmd * ' '
 	IO.popen(cmd_str, &:read)
 end

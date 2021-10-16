@@ -23,7 +23,7 @@ cmd << "-i #{inf}"
 # cmd<<"-vf 'transpose=#{trans_type}'"
 cmd << "-vf 'rotate=-PI/2'"
 cmd << '-crf 22' # -qscale 0"
-cmd << "out-#{inf}"
+cmd << "vrot-#{inf}"
 
 p cmd * ' '
 

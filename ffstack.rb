@@ -33,23 +33,35 @@ cuts.take(4).each_with_index do |(ss, to), i|
   cmd << "-ss #{ss} -to #{to} -i '#{inf}'"
 end
 
-filter=[
-  %([0:a][1:a][2:a][3:a]amix=inputs=4:duration=shortest[a]),
-	%([0:v]scale=#{scale}:-1[v0]),
-	%([1:v]scale=#{scale}:-1[v1]),
-	%([2:v]scale=#{scale}:-1[v2]),
-	%([3:v]scale=#{scale}:-1[v3]),
-	%([v0][v1]hstack=inputs=2:shortest=1[top]),
-  %([v2][v3]hstack=inputs=2:shortest=1[bot]),
-  %([top][bot]vstack=inputs=2:shortest=1,scale=1280:720[v]),
- ].join(';')
+# filter=<<~FFMPEG
+  # [0:a][1:a][2:a][3:a]amix=inputs=4:duration=shortest[a]
+	# [0:v]scale=#{scale}:-1[v0]
+	# [1:v]scale=#{scale}:-1[v1]
+	# [2:v]scale=#{scale}:-1[v2]
+	# [3:v]scale=#{scale}:-1[v3]
+	# [v0][v1]hstack=inputs=2:shortest=1[top]
+  # [v2][v3]hstack=inputs=2:shortest=1[bot]
+  # [top][bot]vstack=inputs=2:shortest=1,scale=1280:720[v]
+# FFMPEG
+filter=<<~FFMPEG
+	[0:v]setpts=PTS-STARTPTS,scale=640:-1[v0]
+	[1:v]setpts=PTS-STARTPTS,scale=640:-1[v1]
+	[2:v]setpts=PTS-STARTPTS,scale=640:-1[v2]
+	[3:v]setpts=PTS-STARTPTS,scale=640:-1[v3]
+	[v0][v1][v2][v3]xstack=inputs=4:shortest=1:layout=0_0|w0_0|0_h0|w0_h0,scale=1280:720[v]
+	[0:a][1:a][2:a][3:a]amix=inputs=4:duration=shortest[a]
+FFMPEG
 
-cmd<<%(-filter_complex '#{filter}') 
-cmd<<%(-map "[v]") 
-cmd<<%(-map "[a]") 
-cmd<<%(-ac 2) 
-cmd<<"stacked_#{sane_name}"
+filter.gsub!(/\n/,";")
+filter.gsub!(/;$/, '')
 
-p cmd
+cmd<< %(-filter_complex '#{filter.chomp}') 
+cmd<< %(-map "[v]") 
+cmd<< %(-map "[a]") 
+# cmd<< '-ac 2'
+# cmd<< '-shortest'
+cmd<< "vstacked_#{sane_name}"
+
+puts cmd
 
 IO.popen(cmd.join(' '), &:read)

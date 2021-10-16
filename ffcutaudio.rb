@@ -23,7 +23,7 @@ cuts.each_with_index do |(ss, to), i|
 	cmd << '-vn'
 	cmd << '-c copy'
 	cmd << '-avoid_negative_ts make_zero'
-	cmd << "'seg_%s_%s'" % [ss.tr(':', '_'), sane_name]
+	cmd << "'aseg_%s_%s'" % [ss.tr(':', '_'), sane_name]
 
 	p cmd_str = cmd * ' '
 	IO.popen(cmd_str, &:read)

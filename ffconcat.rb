@@ -13,5 +13,5 @@ end
 
 File.open('concat.txt', 'w'){|f| f.puts text.join("\n")}
 
-cmd="ffmpeg -f concat -safe 0 -i concat.txt -crf 23 out-concat.mp4"
+cmd="ffmpeg -f concat -safe 0 -i concat.txt -crf 23 vcat.mp4"
 IO.popen(cmd, &:read)

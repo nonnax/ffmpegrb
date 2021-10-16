@@ -10,7 +10,7 @@ cmd=<<~FFMPEG
 	ffmpeg
 	-i 'concat:#{files.join("|")}'
 	-c copy
-	out_audio.mp3
+	acat.mp3
 FFMPEG
 
 IO.popen(cmd, &:read)

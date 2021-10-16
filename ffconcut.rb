@@ -29,6 +29,6 @@ streams_enum = istreams.join(' ')
 
 cmd << "-filter_complex '#{streams_enum}concat=n=#{cuts.size}:v=1:a=1[out]'"
 cmd << "-map '[out]'"
-cmd << "'out-#{sane_name}'"
+cmd << "'vseg_#{sane_name}'"
 p cmd_str = cmd * ' '
 IO.popen(cmd_str, &:read)

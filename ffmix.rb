@@ -12,7 +12,7 @@ cmd=<<~FFMPEG
 	-i '#{a}'
 	-map 0:0 -map 1:0
 	-shortest
-	'#{v}_#{a}.mp4'
+	'mix_#{v}_#{a}.mp4'
 FFMPEG
 
 cmd.gsub!(/\n/, ' ')
