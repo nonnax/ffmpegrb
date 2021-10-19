@@ -11,7 +11,7 @@ def combine(v, a)
 		-i '#{a}'
 		-c copy -map 0:0 -map 1:0
 		-shortest
-	  'mix_#{v}_#{a}.mp4'
+	  'vmix_#{v}_#{a}.mp4'
 	FFMPEG
 	cmd.gsub!(/\n/, ' ')
 	IO.popen(cmd, &:read)
