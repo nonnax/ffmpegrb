@@ -9,8 +9,9 @@ exit unless inf
 
 cmd=[]
 cmd<<"ffmpeg -i '#{inf}'"
-cmd<<"-vf scale=-1:#{size}"
+# cmd<<"-vf scale=-1:#{size}"
 cmd<<'-c:v libx264 -crf 18 -preset veryslow -c:a copy'
+cmd<<"-filter:v fps=25,scale=-1:#{size}"
 cmd<<"#{size}-#{inf}"
 p cmd.join(' ')
 IO.popen(cmd.join(' '), &:read)

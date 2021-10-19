@@ -5,29 +5,44 @@
 # ffmpeg -i video.mkv -i audio.m4a -filter_complex "[0:a][1:a]amerge=inputs=2[a]" -map 0:v -map "[a]" -c:v copy -ac 2 -shortest output.mkv
 require 'fzf'
 
-v=Dir["*.*"].fzf(cmd: "fzf --prompt='video'").first
-a=Dir["*.mp3"].fzf(cmd: "fzf --prompt='mp3'").first
+arr=[]
 
-exit unless v && a
+ENV['fs'].split("\n").map{|e|
+	basename=e.split(%r[/]).last
+	arr<<basename 
+}
 
-v_sane = v.gsub(/[^\w\d.]/, '_')
-a_sane = a.gsub(/[^\w\d.]/, '_')
+p part = arr.sort.partition{|e| e.match(/^v/)}
+
+exit unless arr
 
 
-cmd=[]
-cmd=<<~FFMPEG 
-	ffmpeg
-	-i '#{v}'
-	-i '#{a}'
-	-filter_complex '[0:a][1:a]amix=inputs=2[a]'
-	-map 0:v -map '[a]'
-	-c:v copy
-  -ac 2 
-  -shortest
-	vbg_#{a_sane}_#{v_sane}
-FFMPEG
+def add_bg(v, a)
+	v_sane = v.gsub(/[^\w\d.]/, '_')
+	a_sane = a.gsub(/[^\w\d.]/, '_')
 
-cmd.gsub!(/\n/,' ')
+	cmd=[]
+	cmd=<<~FFMPEG 
+		ffmpeg
+		-i '#{v}'
+		-i '#{a}'
+		-filter_complex '[0:a][1:a]amix=inputs=2[a]'
+		-map 0:v -map '[a]'
+		-c:v copy
+	  -ac 2 
+	  -shortest
+		vbg_#{v_sane}_#{a_sane}
+	FFMPEG
+	cmd.gsub!(/\n/, ' ')
+	IO.popen(cmd, &:read) 
+end
+
+
+choice=%w[no yes].fzf(cmd: %(fzf --prompt="add background?")).first
+
+part.transpose.each{|v, a|
+	add_bg(v, a)
+} if choice=='yes'
+
+# cmd.gsub!(/\n/,' ')
 # puts cmd.strip
-choice=%w[yes no].fzf(cmd: %(fzf --prompt="#{cmd}")).first
-IO.popen(cmd, &:read) if choice=='yes'
