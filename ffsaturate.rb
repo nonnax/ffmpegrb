@@ -10,20 +10,21 @@
 # glum, green luma coefficient (1 to 0 default 0)
 # blum, blue luma coefficient (1 to 0 default 0)
 
-def saturate(inf, intensity:1.08)
-	cmd=<<~FFMPEG
-		ffmpeg 
-		-i '#{inf}'
-		-filter_complex "vibrance=intensity=#{intensity}" 
-		-pix_fmt yuv420p 
-		-c:a copy
-		'vvib_#{inf}'
-	FFMPEG
-	cmd.gsub!(/\n/, ' ')
-	IO.popen(cmd, &:read)
+def saturate(inf, intensity:1.05)
+  cmd=<<~FFMPEG
+    ffmpeg 
+    -i '#{inf}'
+    -filter_complex "vibrance=intensity=#{intensity}" 
+    -crf 20
+    -pix_fmt yuv420p 
+    -c:a copy
+    'vvib_#{inf}'
+  FFMPEG
+  cmd.gsub!(/\n/, ' ')
+  IO.popen(cmd, &:read)
 end
 
 ENV['fs'].split(/\n/).each do |e|
-	basename=File.basename(e)
-	saturate(basename)
+  basename=File.basename(e)
+  saturate(basename)
 end

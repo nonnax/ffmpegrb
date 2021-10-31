@@ -6,18 +6,18 @@
 text=[]
 
 ENV["fs"].split("\n").each  do |f|
-	text << %(file '#{f}')
+  text << %(file '#{f}')
 end
 
 IO.write( 'concat.txt', text.join("\n") )
 
 cmd=<<~FFMPEG
-	ffmpeg
-	-f concat
-	-safe 0
-	-i concat.txt
-	-c copy
-	vcat_#{Time.now.min}.mp4
+  ffmpeg
+  -f concat
+  -safe 0
+  -i concat.txt
+  -c copy
+  vcat_#{Time.now.min}.mp4
 FFMPEG
 
 cmd.gsub!(/\n/, ' ')

@@ -8,10 +8,13 @@ size=['1280:720', '1920:1080'].fzf(cmd: %(fzf --prompt='dimension')).first
 exit unless inf
 
 cmd=[]
-cmd<<"ffmpeg -i '#{inf}'"
-# cmd<<"-vf scale=-1:#{size}"
-cmd<<'-c:v libx264 -crf 20 -preset veryslow -c:a copy'
-cmd<<"-filter:v fps=25,scale=#{size}"
-cmd<<"#{size.split(':').last}-#{inf}"
+cmd <<"ffmpeg -i '#{inf}'"
+cmd <<"-filter:v fps=25,scale=#{size}"
+cmd <<'-c:v libx264'
+cmd <<'-crf 20 -preset veryslow'
+cmd <<'-c:a copy'
+cmd <<'-pix_fmt yuv420p'
+cmd <<'-movflags +faststart'
+cmd<<"'#{size.split(':').last}-#{inf}'"
 p cmd.join(' ')
 IO.popen(cmd.join(' '), &:read)

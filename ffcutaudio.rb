@@ -17,15 +17,17 @@ cuts_df.empty? && cuts_df << %w[00:00:00.000 00:00:01.000]
 cuts = cuts_df.map # shared
 
 cuts.each_with_index do |(ss, to), i|
-	cmd = []
-	cmd << 'ffmpeg'
-  cmd << "-ss #{ss} -i '#{inf}' -to #{to}"
-	cmd << '-vn'
-	cmd << '-c copy'
-	cmd << '-avoid_negative_ts make_zero'
-	cmd << "'aseg_%s_%s'" % [ss.tr(':', '_'), sane_name]
+  cmd = []
+  cmd << 'ffmpeg'
+  cmd << "-ss #{ss}"
+  cmd << "-i '#{inf}'"
+  cmd << "-to #{to}"
+  cmd << '-vn'
+  cmd << '-c copy'
+  cmd << '-avoid_negative_ts make_zero'
+  cmd << "'aseg_%s_%s'" % [ss.tr(':', '_'), sane_name]
 
-	p cmd_str = cmd * ' '
-	IO.popen(cmd_str, &:read)
+  p cmd_str = cmd * ' '
+  IO.popen(cmd_str, &:read)
 end
 

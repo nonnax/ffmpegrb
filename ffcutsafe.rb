@@ -10,7 +10,7 @@ require 'arraycsv'
 p inf = Dir['*.*'].fzf.first
 
 exit unless inf
-sane_name = File.basename(inf, '.*').gsub(/[^\w\d.]/, '_')
+sane_name = File.basename(inf).gsub(/[^\w\d.]/, '_')
 
 cuts_df = ArrayCSV.new("cut-#{sane_name}.csv")
 cuts_df.empty? && cuts_df << %w[00:00:00.000 00:00:01.000]
@@ -18,14 +18,14 @@ cuts = cuts_df.map # shared
 
 cuts.each_with_index do |(ss, to), i|
   cmd = []
-  cmd << 'ffmpeg'  
+  cmd << 'ffmpeg'
   cmd << "-i '#{inf}' -ss #{ss} -to #{to}"
-  cmd << '-c copy'
-  cmd << '-async 1'
+  cmd << '-c:a copy'
+  cmd << '-c:v libx264'
+  cmd << '-crf 20 -preset slow'
   cmd << '-pix_fmt yuv420p'
-  cmd<< "'vseg_%s_%s.mkv'" % [ss.tr(':', '_'), sane_name]
+  cmd<< "'vseg_safe_%s_%s'" % [ss.tr(':', '_'), sane_name]
   p cmd_str = cmd * ' '
   IO.popen(cmd_str, &:read)
-  sleep 1
 end
 

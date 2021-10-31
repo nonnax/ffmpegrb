@@ -7,12 +7,12 @@ v=Dir['*.*'].fzf(cmd: %(fzf --prompt='video')).first
 a=Dir['*.mp3'].fzf(cmd: %(fzf --prompt='audio')).first
 
 cmd=<<~FFMPEG
-	ffmpeg
-	-i '#{v}'
-	-i '#{a}'
-	-map 0:0 -map 1:0
-	-shortest
-	'vmix_#{v}_#{a}.mp4'
+  ffmpeg
+  -i '#{v}'
+  -i '#{a}'
+  -map 0:0 -map 1:0
+  -shortest
+  'vmix_#{v}_#{a}.mp4'
 FFMPEG
 
 cmd.gsub!(/\n/, ' ')

@@ -21,8 +21,6 @@ cuts.each_with_index do |(ss, to), i|
 	cmd = []
 	cmd << 'ffmpeg'
   cmd << "-i '#{inf}' -ss #{ss} -to #{to}"
-	# cmd << "-filter:v fps=25,scale=#{size}"
-	# cmd<< '-vf mp=eq2=1:1.68:0.3:1.25:1:0.96:1'
 	cmd << '-c:a copy'
 	cmd << '-c:v libx264'
 	cmd << '-crf 20 -preset slow'

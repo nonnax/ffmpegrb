@@ -15,7 +15,7 @@ require 'array_table'
 require 'fzf'
 
 def layout(row, col)
-	scale=['1920:1080', '1280:720'].fzf.first
+  scale=['1920:1080', '1280:720'].fzf.first
 
   rule = lambda { |k, i|
     return 0 if i.zero?
@@ -28,18 +28,18 @@ def layout(row, col)
   }
 
   streams = (0..(row*col)-1).to_a
-	vstreams=[]
-	astreams=[]
+  vstreams=[]
+  astreams=[]
 
   avstreams=streams.inject([]){ |a, i|
-  	a<<"[#{i}:v]setpts=PTS-STARTPTS,scale=640:-1[v#{i}]"	
+    a<<"[#{i}:v]setpts=PTS-STARTPTS,scale=640:-1[v#{i}]"	
   }
 
-	streams.size.times{ |i|
-		vstreams<<"[v#{i}]"
-		astreams<<"[#{i}:a]"
-	}
-		
+  streams.size.times{ |i|
+    vstreams<<"[v#{i}]"
+    astreams<<"[#{i}:a]"
+  }
+    
   data = []
   row.times do |h|
     builder = []
@@ -54,7 +54,7 @@ def layout(row, col)
   builder=[]
   builder<<avstreams.join(";\n")
   builder<<';'
-	builder<<"\n"
+  builder<<"\n"
   builder<<vstreams.join
   builder<<"xstack=inputs=#{streams.size}:shortest=1:layout="
   builder<<data.join('|')
@@ -73,10 +73,10 @@ row, col = ARGV.map(&:to_i)
 puts layout(row, col)
 
 # filter=<<~FFMPEG
-	# [0:v]setpts=PTS-STARTPTS,scale=640:-1[v0]
-	# [1:v]setpts=PTS-STARTPTS,scale=640:-1[v1]
-	# [2:v]setpts=PTS-STARTPTS,scale=640:-1[v2]
-	# [3:v]setpts=PTS-STARTPTS,scale=640:-1[v3]
-	# [v0][v1][v2][v3]xstack=inputs=4:shortest=1:layout=0_0|w0_0|0_h0|w0_h0,scale=1280:720[v]
-	# [0:a][1:a][2:a][3:a]amix=inputs=4:duration=shortest[a]
+  # [0:v]setpts=PTS-STARTPTS,scale=640:-1[v0]
+  # [1:v]setpts=PTS-STARTPTS,scale=640:-1[v1]
+  # [2:v]setpts=PTS-STARTPTS,scale=640:-1[v2]
+  # [3:v]setpts=PTS-STARTPTS,scale=640:-1[v3]
+  # [v0][v1][v2][v3]xstack=inputs=4:shortest=1:layout=0_0|w0_0|0_h0|w0_h0,scale=1280:720[v]
+  # [0:a][1:a][2:a][3:a]amix=inputs=4:duration=shortest[a]
 # FFMPEG
