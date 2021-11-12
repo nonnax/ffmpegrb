@@ -6,13 +6,14 @@
 # -*- nonnax  -*- : 2021-09-30 01:37:01 +0800
 require 'fzf'
 require 'arraycsv'
+require 'file_ext' # String#to_safename
+
 
 p inf = Dir['*.*'].fzf.first
 
 exit unless inf
-sane_name = inf.gsub(/[^\w\d.]/, '_')
 
-cuts_df = ArrayCSV.new("cut-#{sane_name}.csv")
+cuts_df = ArrayCSV.new("cut-#{inf.to_safename}.csv")
 cuts_df.empty? && cuts_df << %w[00:00:00.000 00:00:01.000]
 cuts = cuts_df.map # shared
 
@@ -29,6 +30,6 @@ streams_enum = istreams.join(' ')
 
 cmd << "-filter_complex '#{streams_enum}concat=n=#{cuts.size}:v=1:a=1[out]'"
 cmd << "-map '[out]'"
-cmd << "'vseg_#{sane_name}'"
+cmd << "'vseg_#{inf.to_safename}'"
 p cmd_str = cmd * ' '
 IO.popen(cmd_str, &:read)

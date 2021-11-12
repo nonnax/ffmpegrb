@@ -6,11 +6,12 @@
 # -*- nonnax  -*- : 2021-09-30 01:37:01 +0800
 require 'fzf'
 require 'arraycsv'
+require 'file_ext'
 
 p inf = Dir['*.*'].fzf.first
 
 exit unless inf
-sane_name = File.basename(inf).gsub(/[^\w\d.]/, '_')
+sane_name = File.basename(inf).to_safename
 
 cuts_df = ArrayCSV.new("cut-#{sane_name}.csv")
 cuts_df.empty? && cuts_df << %w[00:00:00.000 00:00:01.000]

@@ -10,7 +10,7 @@
 # glum, green luma coefficient (1 to 0 default 0)
 # blum, blue luma coefficient (1 to 0 default 0)
 
-def saturate(inf, intensity:1.05)
+def saturate(inf, intensity:1.025)
   cmd=<<~FFMPEG
     ffmpeg 
     -i '#{inf}'

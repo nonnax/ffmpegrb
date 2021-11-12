@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+# Id$ nonnax 2021-11-03 22:25:39 +0800
+
+ffmpeg -hide_banner -nostats -i $1 -af "volumedetect" -vn -sn -dn -f null /dev/null 

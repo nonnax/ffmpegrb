@@ -17,11 +17,13 @@ cmd=<<~FFMPEG
   #{in_files.join(' ')}
   -filter_complex
   "[0:v] [0:a] [1:v] [1:a] concat=n=2:v=1:a=1 [v] [a]"
-  -map [v] -map [a] -y 
+  -map [v] 
+  -map [a] 
+  -y 
   -crf 22
-  vcat_filter#{Time.timesum}.mp4
+  vcat_filter#{Time.now_sum}.mp4
 FFMPEG
 
-cmd.gsub!(/\n/, ' ')
+cmd.gsub!(/\n{1,}/, ' ')
 
 IO.popen(cmd, &:read)

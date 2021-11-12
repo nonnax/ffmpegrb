@@ -4,11 +4,12 @@
 # Use video from video.mkv. Mix audio from video.mkv and audio.m4a using the amerge filter:
 # ffmpeg -i video.mkv -i audio.m4a -filter_complex "[0:a][1:a]amerge=inputs=2[a]" -map 0:v -map "[a]" -c:v copy -ac 2 -shortest output.mkv
 require 'fzf'
+require 'file_ext'
 
 arr=[]
 
 ENV['fs'].split("\n").map{|e|
-  basename=e.split(%r[/]).last
+  basename=File.basename(e)
   arr<<basename 
 }
 
@@ -18,9 +19,6 @@ exit unless arr
 
 
 def add_bg(v, a)
-  v_sane = v.gsub(/[^\w\d.]/, '_')
-  a_sane = a.gsub(/[^\w\d.]/, '_')
-
   cmd=[]
   cmd=<<~FFMPEG 
     ffmpeg
@@ -31,7 +29,7 @@ def add_bg(v, a)
     -c:v copy
     -ac 2 
     -shortest
-    vbg_#{v_sane}_#{a_sane}
+    vbg_#{v.to_safename}_#{a.to_safename}
   FFMPEG
   cmd.gsub!(/\n/, ' ')
   IO.popen(cmd, &:read) 

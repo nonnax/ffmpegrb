@@ -2,11 +2,12 @@
 # Id$ nonnax 2021-10-13 20:38:45 +0800
 require 'fzf'
 require 'arraycsv'
+require 'file_ext'
 
 p inf = Dir['*.mp4'].fzf.first
 
 exit unless inf
-sane_name = inf.gsub(/[^\w\d.]/, '_')
+sane_name = inf.to_safename
 
 cuts_df = ArrayCSV.new("stack-#{sane_name}.csv")
 cuts_df.empty? && cuts_df << %w[00:00:00.000 00:00:01.000]
