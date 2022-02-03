@@ -19,7 +19,6 @@ exit unless arr
 
 
 def add_bg(v, a)
-  cmd=[]
   cmd=<<~FFMPEG 
     ffmpeg
     -i '#{v}'

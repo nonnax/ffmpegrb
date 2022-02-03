@@ -7,7 +7,7 @@ exit unless [f, db_vol].all?
 
 basename=File.basename(f)
 
-db="%.1f" % [db_vol.to_f*1+1+1]
+db="%.1f" % [db_vol.to_f].map{|x| x.zero? ? 0 : (1-x)-1}
 p [f, db_vol, db].join('->')
   
 cmd=<<~___

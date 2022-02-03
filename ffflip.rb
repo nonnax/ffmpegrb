@@ -11,7 +11,7 @@ def flip(inf, flip:'hflip')
   IO.popen(cmd, &:read)
 end
 
-ENV['fs'].split(/\n/).each do |e|
+ARGV.each do |e|
   fname=File.basename(e)
   p flip(fname)
 end

@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+# Id$ nonnax 2021-10-17 17:51:35 +0800
+
+cd '/home/seti/ruby-sandbox/github/ffmpegrb'
+f=$(fd '^ff.*rb' | sort -r | fzf --preview='bat {} -l rb --color=always')
+lf_select "$f"

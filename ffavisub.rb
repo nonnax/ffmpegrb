@@ -32,7 +32,7 @@ cmd=<<~CMD
   -vtag DIVX 
   -q:a 5
   -q:v 5
-  -crf 24
+  -crf 23
   sub-#{infile}.avi
 CMD
 cmd.gsub!(/\n/, ' ')

@@ -1,7 +1,8 @@
 #!/usr/bin/env ruby
 # Id$ nonnax 2022-01-17 09:13:05 +0800
+# ffaddass.rb <file><size>
+
 infile, size = ARGV
-size ||= '480'
 
 res=['320:240', 
      '640:360', 
@@ -15,7 +16,13 @@ s=res.map do |e|
     .last 
 end
 
-p sizes=s.zip(res).to_h
+p 'ffaddass.rb <file><size>'
+p ['sizes']+s
+
+exit unless [infile, size].all?
+
+size ||= '480'
+sizes=s.zip(res).to_h
 size=sizes[size]
 # ffmpeg -i input.mkv -filter_complex "[0:v:0]scale=1280:720,subtitles=individual.ass[v]" -map "[v]" -map 0:a -map 0:s -c copy -c:v libx265 -crf 32 output.mkv
 
