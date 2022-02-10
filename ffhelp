@@ -4,3 +4,16 @@
 cd '/home/seti/ruby-sandbox/github/ffmpegrb'
 f=$(fd '^ff.*rb' | sort -r | fzf --preview='bat {} -l rb --color=always')
 lf_select "$f"
+
+cat <<HERE
+Valid sizes:
+240, 360, 480, 720, 1080
+
+Valid presets are :
+
+ultrafast, superfast, veryfast, faster, fast, 
+medium, slow, slower, veryslow, and placebo.
+
+Use the slowest preset you have patience for.
+
+HERE

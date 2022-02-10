@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 # Id$ nonnax 2021-10-31 10:41:19 +0800
-require 'fzf'
+require 'rubytools/fzf'
 # 
 trans_type = ARGV.first&.to_i || 2
 

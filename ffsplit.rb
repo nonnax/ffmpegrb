@@ -24,7 +24,7 @@ cuts = cuts_df.map # shared
 
 cuts.each_with_index do |(ss, to), i|
   # new_name=format "vseg_%{ss}_%{name}%{ext}", {ss: ss.tr(':', '_'), name:, ext:}
-  new_name=format "%{i}-of-%{slice}-%{name}%{ext}", {slice: , i: i.succ, name:, ext:}
+  new_name=format "%{i}-of-%{slice}-%{name}%{ext}", {slice: slice , i: i.succ, name: name, ext: ext}
 
   cmd =<<~___
   ffmpeg

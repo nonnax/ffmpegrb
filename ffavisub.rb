@@ -8,36 +8,65 @@
 # -crf 24 -vtag DIVX -vf scale=640:480 -aspect 4:3 -mbd rd -flags +mv4+aic \
 # -trellis 2 -cmp 2 -subcmp 2 -g 30 -vb 1500k output.avi
 
-# require 'fflib'
+require 'fflib'
+require 'rubytools/fzf'
+
 infile, scale = ARGV
 scale ||= '480'
 
-# size=SCALES[scale]
-size='640:480'
+fail 'ffavisub.rb <vid.mp4> <scale>' unless [infile, scale].all?
+size=RESOLUTIONS.fzf.first
+scale_name=size.split(/:/).last
+# size='640:480'
 
 inf=File.basename(infile, '.*')
 # preprocess sub
 # convert srt into ass
-cmd="ffmpeg -i #{inf}.srt #{inf}.ass"
-IO.popen(cmd, &:read)
+begin
+  sub_cmd="ffmpeg -hide_banner -i #{inf}.srt #{inf}.ass"
+  IO.popen(sub_cmd, &:read)
 
-# burn ass subtitles into new video output
-cmd=<<~CMD
-  ffmpeg -i #{infile} 
-  -filter_complex '[0:v:0] scale=#{size}, subtitles=#{inf}.ass [v]'
-  -map '[v]'
-  -map 0:a
-  -c:a libmp3lame -ar 48000 -ab 128k -ac 2
-  -c:v libxvid
-  -vtag DIVX 
-  -q:a 5
-  -q:v 5
-  -crf 23
-  sub-#{infile}.avi
-CMD
-cmd.gsub!(/\n/, ' ')
+  # burn ass subtitles into new video output
+  # -c:v libxvid
+  # -q:a 5
+  # -q:v 5
 
-IO.popen(cmd, &:read)
+  # cmd=<<~CMD
+    # ffmpeg
+    # -hide_banner
+    # -i #{infile}
+    # -filter_complex '[0:v]scale=#{size}, subtitles=#{inf}.ass[v]'
+    # -map '[v]'
+    # -map 0:a
+    # -c:v mpeg4
+    # -c:a libmp3lame -ar 48000 -ab 128k -ac 2
+    # -vtag DIVX
+    # -preset fast
+    # -crf 23
+    # sub-#{infile}.avi
+  # CMD
+  cmd=<<~CMD
+    ffmpeg 
+    -hide_banner    
+    -i #{infile} 
+    -filter_complex '[0:v:0]scale=#{size}, subtitles=#{inf}.ass[v]'
+    -map '[v]'
+    -map 0:a
+    -c:v mpeg4
+    -c:a libmp3lame -ar 48000 -ab 128k -ac 2
+    -vtag DIVX 
+    -preset medium
+    -q:v 5
+    -crf 22
+    #{scale_name}-#{infile}.avi
+  CMD
 
+  cmd.gsub!(/\n/, ' ')
+
+  IO.popen(cmd, &:read)
+
+ensure
+  p [sub_cmd, cmd]
+end
 # cmd="ffmpeg -i #{infile} -f srt -i #{srt} -c:v copy -c:a copy -c:s mov_text sub-#{infile}"
 # cmd="ffmpeg -i #{infile} -vf ass=#{srt}.ass -max_interleave_delta sub-#{infile}" # mkv

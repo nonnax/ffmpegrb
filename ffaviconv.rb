@@ -16,19 +16,34 @@
 
 inf=ARGV.first
 fail "missing input video" unless inf
+# -c:v libxvid
 
 inf_basename=File.basename(inf, '.*')
+# cmd=<<~___
+# ffmpeg -i #{inf}
+# -c:v mpeg4
+# -q:v 5
+# -vf scale=640:480
+# -vtag xvid
+# -c:a libmp3lame
+# -ar 48000
+# -ab 128k
+# -ac 2
+# -q:a 5
+# #{inf_basename}.avi
+# ___
 cmd=<<~___
 ffmpeg -i #{inf} 
+-c:v mpeg4
+-vf scale=640:480
+-vtag xvid
 -c:a libmp3lame 
 -ar 48000 
 -ab 128k 
 -ac 2
--c:v libxvid
--q:a 5
--q:v 5
--vf scale=640:480
--vtag xvid
+-q:v 3
+-q:a 4
+-crf 24
 #{inf_basename}.avi
 ___
 cmd.gsub!(/\n+/, ' ' )

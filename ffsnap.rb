@@ -9,7 +9,7 @@
     # -s 480x300: frame size of image to output (image resized to fit dimensions)
     # -f image2: forces format
 
-require 'file_ext'
+require 'rubytools/file_ext'
 inf, start = ARGV.size>1 ? ARGV : [nil]+ARGV
 inf ||= ENV['fx'].split("\n").first
 exit unless inf
