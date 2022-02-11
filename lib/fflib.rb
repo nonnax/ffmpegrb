@@ -1,18 +1,35 @@
 #!/usr/bin/env ruby
 # Id$ nonnax 2022-01-21 14:54:29 +0800
-RESOLUTIONS=['320:240', 
-     '640:360', 
-     '854:480', 
-     '1280:720', 
-     '1920:1080']
+RESOLUTIONS =
+%w[
+ 320:240 
+ 640:360 
+ 854:480 
+ 1280:720 
+ 1920:1080
+]
 
-s=RESOLUTIONS.map do |e| 
-    e
-    .split(':')
-    .last 
+s = RESOLUTIONS.map do |e| 
+  e
+  .split(':')
+  .last + 'p'
 end
 
-SCALES=s.zip(RESOLUTIONS).to_h
+SCALES = s.zip(RESOLUTIONS).to_h
+
+PRESETS =
+%w[
+  ultrafast
+  superfast
+  veryfast
+  faster
+  fast
+  medium
+  slow
+  slower
+  veryslow
+  placebo
+]
 
 # 
 # Constant Rate Factor (CRF)
