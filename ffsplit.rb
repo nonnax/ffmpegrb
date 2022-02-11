@@ -17,17 +17,13 @@ name, ext = File.splitname(inf.to_safename)
 total_time=IO.popen("ffprobetime.rb #{inf}", &:read)
 cuts=total_time.timeslice(slice.to_i)
 
-cuts_df = ArrayCSV.new("cut-#{name}.csv")
-cuts_df.empty? && cuts_df << %w[00:00:00.000 00:00:01.000]
-cuts_df.dataframe.replace cuts
-cuts = cuts_df.map # shared
-
 cuts.each_with_index do |(ss, to), i|
   # new_name=format "vseg_%{ss}_%{name}%{ext}", {ss: ss.tr(':', '_'), name:, ext:}
   new_name=format "%{i}-of-%{slice}-%{name}%{ext}", {slice: slice , i: i.succ, name: name, ext: ext}
 
   cmd =<<~___
   ffmpeg
+  -hide_banner 
   -i '#{inf}' -ss #{ss} -to #{to}
   -c copy
   #{new_name}
