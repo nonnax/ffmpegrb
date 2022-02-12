@@ -14,37 +14,32 @@
     # -crf 24 -vtag DIVX -vf scale=640:480 -aspect 4:3 -mbd rd -flags +mv4+aic \
     # -trellis 2 -cmp 2 -subcmp 2 -g 30 -vb 1500k output.avi
 
-inf=ARGV.first
-fail "missing input video" unless inf
-# -c:v libxvid
+infile=ARGV.first
 
-inf_basename=File.basename(inf, '.*')
-# cmd=<<~___
-# ffmpeg -i #{inf}
-# -c:v mpeg4
-# -q:v 5
-# -vf scale=640:480
-# -vtag xvid
-# -c:a libmp3lame
-# -ar 48000
-# -ab 128k
-# -ac 2
-# -q:a 5
-# #{inf_basename}.avi
-# ___
-cmd=<<~___
-ffmpeg -i #{inf} 
--c:v mpeg4
--vf scale=640:480
--vtag xvid
--c:a libmp3lame 
--ar 48000 
--ab 128k 
--ac 2
--q:v 3
--q:a 4
--crf 24
-#{inf_basename}.avi
-___
+fail "missing input video" unless infile
+
+inf=File.basename(infile, '.*')
+size='640:480'
+scale_name='640:480'.split(':').last
+
+cmd=<<~CMD
+  ffmpeg 
+  -hide_banner    
+  -i #{infile} 
+  -filter_complex '[0:v:0]scale=#{size}[v]'
+  -map '[v]'
+  -map 0:a
+  -c:v mpeg4
+  -c:a libmp3lame 
+  -ar 48000 
+  -ab 128k 
+  -ac 2
+  -vtag DIVX 
+  -preset medium
+  -q:v 5
+  -crf 22
+  #{scale_name}-#{infile}.avi
+CMD
 cmd.gsub!(/\n+/, ' ' )
+
 IO.popen(cmd, &:read)
