@@ -12,7 +12,9 @@ require 'rubytools/time_and_date_ext'
 inf, slice = ARGV
 
 exit unless inf
+
 name, ext = File.splitname(inf.to_safename)
+slice = 2 if slice.to_i.zero? 
 
 total_time=IO.popen("ffprobetime.rb #{inf}", &:read)
 cuts=total_time.timeslice(slice.to_i)
