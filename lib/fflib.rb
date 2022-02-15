@@ -65,3 +65,23 @@ PRESETS =
 # 
 # This example uses AAC audio at 128 kBit/s. This uses the native FFmpeg AAC 
 # encoder, but under AAC you will find info about more options.
+# Valid sizes:
+# 240p, 360p, 480p, 720p,
+# 1080p, 1440p, 2160p
+# 
+# # 3840 x 2160 (or 2160p)
+# # 2560 x 1440 (or 1440p)
+# # 1920 x 1080 (or 1080p)
+# # 1280 x 720 (or 720p)
+# # 854 x 480 (or 480p)
+# # 720 x 480 (or 480p)
+# # 640 x 360 (or 360p)
+# # 426 x 240 (or 240p)
+# # 320 x 240 (or 240p)
+# 
+# Valid presets are :
+# 
+# ultrafast, superfast, veryfast, faster, fast,
+# medium, slow, slower, veryslow, and placebo.
+# 
+# Use the slowest preset you have patience for.
