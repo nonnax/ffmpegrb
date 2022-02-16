@@ -13,6 +13,8 @@ OptionParser.new do |o|
   o.on('-pPRESET', '--preset=PRESET')
 end.parse!(into: opts)
 
+size_re=Regexp.new opts.fetch(:size, '360')
+preset_re=Regexp.new opts.fetch(:preset, 'medium')
 
 begin
   # -crf 27
@@ -23,7 +25,8 @@ begin
     854:480
     1280:720
     1920:1080
-  ].fzf.first
+  ].grep( size_re )
+   .first
 
   preset = %w[
     ultrafast
@@ -36,16 +39,18 @@ begin
     slower
     veryslow
     placebo
-  ].fzf.first
+  ].grep( preset_re )
+   .first
 
   size_h = res.split(':').last
 
   cmd = <<~___
-    ffmpeg#{' '}
-    -hide_banner#{'    '}
-    -i '#{inf}'#{'    '}
+    ffmpeg
+    -hide_banner
+    -i '#{inf}'
     -c:v libx265
     -preset #{preset}
+    -crf 25
     -c:a copy
     -filter:v scale=#{res}
     '#{size_h}-#{inf}.mp4'

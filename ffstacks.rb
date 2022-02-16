@@ -3,6 +3,7 @@
 
 # Id$ nonnax 2021-10-13 20:38:45 +0800
 # ffstacks.rb <file><row><col>
+# requires ffmatrix.rb bin to build matrix filter_complex
 # update the stack-<file>
 
 require 'rubytools/fzf'

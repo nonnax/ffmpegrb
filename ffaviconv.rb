@@ -21,8 +21,8 @@ infile, scale=ARGV
 fail "missing input video" unless infile
 
 inf=File.basename(infile, '.*')
-p size=RESOLUTIONS.select{|r| r.match(/#{scale}/) }.first || '640:480'
-scale_name='640:480'.split(':').last
+p size=RESOLUTIONS.select{|r| r.match(/#{scale}/) }.first || '640:360'
+scale_name='640:360'.split(':').last
 
 cmd=<<~CMD
   ffmpeg 
@@ -37,7 +37,7 @@ cmd=<<~CMD
   -ab 128k 
   -ac 2
   -vtag DIVX 
-  -preset medium
+  -preset slow
   -q:v 5
   -crf 22
   #{scale_name}-#{infile}.avi

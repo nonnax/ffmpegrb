@@ -16,8 +16,8 @@ scale ||= '480'
 
 fail 'ffavisub.rb <vid.mp4> <scale>' unless [infile, scale].all?
 size=RESOLUTIONS.fzf.first
+# size='640:360'
 scale_name=size.split(/:/).last
-# size='640:480'
 
 inf=File.basename(infile, '.*')
 # preprocess sub
@@ -53,11 +53,14 @@ begin
     -map '[v]'
     -map 0:a
     -c:v mpeg4
-    -c:a libmp3lame -ar 48000 -ab 128k -ac 2
+    -c:a libmp3lame 
+    -ar 48000 
+    -ab 128k 
+    -ac 2
     -vtag DIVX 
-    -preset medium
+    -preset slow
     -q:v 5
-    -crf 22
+    -crf 21
     #{scale_name}-#{infile}.avi
   CMD
 
