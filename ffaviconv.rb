@@ -21,9 +21,9 @@ infile, scale=ARGV
 fail "missing input video: usage: #{File.basename(__FILE__)} <video> <size {default:480}>" unless infile
 
 inf=File.basename(infile, '.*')
-scale ||= '360'
-p size=RESOLUTIONS.select{|r| r.match?(/#{scale}/) }.first 
-scale_name=size.split(':').last
+scale ||= '480'
+
+SCALES.detect{|h| h.grep(/#{scale}/).first} => [scale_name, size]
 
 cmd=<<~CMD
   ffmpeg 

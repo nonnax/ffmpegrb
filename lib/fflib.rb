@@ -11,13 +11,13 @@ RESOLUTIONS =
  3840:2160
 ]
 
-s = RESOLUTIONS.map do |e| 
+names = RESOLUTIONS.map do |e| 
   e
   .split(':')
   .last + 'p'
 end
 
-SCALES = s.zip(RESOLUTIONS).to_h
+SCALES = names.zip(RESOLUTIONS).to_h
 
 PRESETS =
 %w[

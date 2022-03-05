@@ -15,9 +15,8 @@ infile, scale = ARGV
 scale ||= '480' # standard dvd resolution
 
 fail 'ffavisub.rb <vid.mp4> <scale>' unless [infile, scale].all?
-size=RESOLUTIONS.grep(/#{scale}/).first || '720:480'
-# size='720:480'
-scale_name=size.split(/:/).last
+
+SCALES.detect{|h| h.grep(/#{scale}/).first} => [scale_name, size]
 
 inf=File.basename(infile, '.*')
 # preprocess sub
