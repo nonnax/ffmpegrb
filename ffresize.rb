@@ -5,30 +5,17 @@
 require 'optparse'
 require 'rubytools/fzf'
 
-inf, = ARGV
-opts = {}
-OptionParser.new do |o|
-  o.banner = ('sizes: 240 360 480 720 1080')
-  o.on('-sSIZE', '--size=SIZE')
-  o.on('-pPRESET', '--preset=PRESET')
-end.parse!(into: opts)
-
-size_re=Regexp.new opts.fetch(:size, '360')
-preset_re=Regexp.new opts.fetch(:preset, 'medium')
-
-begin
-  # -crf 27
-  res =
+RES =
   %w[
     320:240
     640:360
     854:480
     1280:720
     1920:1080
-  ].grep( size_re )
-   .first
+  ].freeze
 
-  preset = %w[
+PRESET =
+  %w[
     ultrafast
     superfast
     veryfast
@@ -39,8 +26,43 @@ begin
     slower
     veryslow
     placebo
-  ].grep( preset_re )
-   .first
+  ].freeze
+
+BANNER = <<~___
+    #{File.basename __FILE__} <file> --size=<360> --preset=<medium>
+    sizes are: #{RES.map{|e| e.split(':').last }.join(' | ')}
+    presets are: #{PRESET.join(' | ')}
+___
+
+
+inf, = ARGV
+
+opts = {}
+OptionParser.new do |o|
+  o.banner = BANNER
+  o.on('-sSIZE', '--size=SIZE')
+  o.on('-pPRESET', '--preset=PRESET')
+end.parse!(into: opts)
+
+size_re = Regexp.new opts.fetch(:size, '360')
+preset_re = Regexp.new opts.fetch(:preset, 'medium')
+
+if opts.empty?
+  puts BANNER
+  exit
+end
+
+begin
+  # -crf 27
+  res =
+    RES
+    .grep(size_re)
+    .first
+
+  preset =
+    PRESET
+    .grep(preset_re)
+    .first
 
   size_h = res.split(':').last
 
@@ -53,17 +75,20 @@ begin
     -crf 25
     -c:a copy
     -filter:v scale=#{res}
-    '#{size_h}-#{inf}.mp4'
+    '#{size_h}p-#{inf}-hevc.mp4'
   ___
   cmd.gsub!(/\n+/, ' ')
-  
+
   IO.popen(cmd, &:read)
 rescue StandardError => e
   p e
 ensure
+  puts BANNER
+
   puts <<~___
     Last command:#{' '}
     #{cmd}
+
     Use the slowest preset you have patience for.
 
     To get a "visually lossless" quality, you can use:

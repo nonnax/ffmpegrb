@@ -9,7 +9,7 @@ ms_to_trim = ms_to_trim.to_i
 
 ARGF.each_line do |l|
     acc=[]
-    if l.match(':') 
+    if l.match?(':') 
         a,b = l.strip.gsub(',', '.')
                .split(/\s?-->\s?/) 
         acc= [a, b]

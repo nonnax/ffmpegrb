@@ -24,7 +24,7 @@ ENV['fs'].split("\n").map{|e|
   a<<basename 
 }
 
-part = a.sort.partition{|e| e.match(/^v/)}
+part = a.sort.partition{|e| e.match?(/^v/)}
 
 part.transpose.each{|v, a|
   combine(v, a)

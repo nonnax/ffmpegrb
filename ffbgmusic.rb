@@ -13,7 +13,7 @@ ENV['fs'].split("\n").map{|e|
   arr<<basename 
 }
 
-p part = arr.sort.partition{|e| e.match(/^v/)}
+p part = arr.sort.partition{|e| e.match?(/^v/)}
 
 exit unless arr
 

@@ -12,11 +12,11 @@ require 'fflib'
 require 'rubytools/fzf'
 
 infile, scale = ARGV
-scale ||= '480'
+scale ||= '480' # standard dvd resolution
 
 fail 'ffavisub.rb <vid.mp4> <scale>' unless [infile, scale].all?
-size=RESOLUTIONS.fzf.first
-# size='640:360'
+size=RESOLUTIONS.grep(/#{scale}/).first || '720:480'
+# size='720:480'
 scale_name=size.split(/:/).last
 
 inf=File.basename(infile, '.*')
@@ -60,8 +60,8 @@ begin
     -vtag DIVX 
     -preset slow
     -q:v 5
-    -crf 21
-    #{scale_name}-#{infile}.avi
+    -crf 20
+    #{scale_name}p-#{infile}.avi
   CMD
 
   cmd.gsub!(/\n/, ' ')

@@ -18,11 +18,12 @@ require 'rubytools/fzf'
 
 infile, scale=ARGV
 
-fail "missing input video" unless infile
+fail "missing input video: usage: #{File.basename(__FILE__)} <video> <size {default:480}>" unless infile
 
 inf=File.basename(infile, '.*')
-p size=RESOLUTIONS.select{|r| r.match(/#{scale}/) }.first || '640:360'
-scale_name='640:360'.split(':').last
+scale ||= '360'
+p size=RESOLUTIONS.select{|r| r.match?(/#{scale}/) }.first 
+scale_name=size.split(':').last
 
 cmd=<<~CMD
   ffmpeg 
