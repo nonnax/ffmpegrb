@@ -1,23 +1,21 @@
 #!/usr/bin/env ruby
 # Id$ nonnax 2022-06-05 11:35:55 +0800
 require 'fileutils'
+require 'erb'
 
 class FFMpeg
-  attr :path
+  attr :path, :basename, :ext, :method
   def initialize(path=nil)
     @path=path
+    @basename, _, @ext = @path.rpartition('.')
   end
 
   def tempfile
-    @tempfile=File.join([@type, _basename(@path), @ext].compact.join('_'))
-  end
-
-  def _basename(f)
-    File.basename(f)
+    @tempfile=File.join([@method, @basename.tr('/','_'), @ext].compact.join('.'))
   end
 
   def cut(ss:nil, to:nil, ext:nil, extra:'')
-    @type=__method__
+    @method=__method__
     @ext=ext
 
     @cmd="ffmpeg -i '#{@path}'"
@@ -28,34 +26,34 @@ class FFMpeg
   end
 
   def crop(in_w:3, extra:'-preset veryslow')
-    @type=__method__
+    @method=__method__
     @ext=ext
     @cmd="ffmpeg -i '#{@path}' -filter:v 'crop=in_w/#{in_w}:in_h:in_w/#{in_w}:0'"
     @cmd<<" #{extra} #{tempfile}"
     self
   end
   
-  def get_audio(ext:'.wav', extra:'-vn')
+  def get_audio(ext:'wav', extra:'-vn')
     cut(ext:, extra:)
-    @type=__method__
+    @method=__method__
     self
   end
   
   def get_video(ext:nil, extra:'-an')
     cut(ext:, extra: )
-    @type=__method__
+    @method=__method__
     self
   end
    
   def add_audio(audio:nil, ext:nil, extra:'')
-    @type=__method__
+    @method=__method__
     @cmd="ffmpeg -i '#{@path}' -i '#{audio}' -c:v copy #{extra} #{tempfile}"
     @cmd<<' '+ext if ext
     self
   end
 
   def blur(radius:5)
-    @type=__method__
+    @method=__method__
     @cmd=<<~___
       ffmpeg -i '#{@path}' -filter_complex 
         '[0:v]boxblur=luma_radius=#{radius}:chroma_radius=#{radius}:luma_power=1[blurred]' 
@@ -65,7 +63,7 @@ class FFMpeg
   end
   
   def fadein(duration:5)
-    @type=__method__
+    @method=__method__
     @cmd=<<~___
       ffmpeg -i '#{@path}' -filter_complex 
         '[0:v]fade=type=in:start_time=1:duration=#{duration}[fadein]' 
@@ -78,7 +76,7 @@ class FFMpeg
     IO.popen(@cmd.gsub(/\n/,' '), &:read) if @cmd
     FFMpeg.new(@tempfile)
   end
-  
+
   def save
     @tempfile.then{|tf| FileUtils.mv( tf, '.')}
   end
