@@ -5,9 +5,21 @@ require 'mote'
 
 class HString<SimpleDelegator
   def to_str
-    inject([]){|acc, h|
-      acc<< "-%s %s" % h
-    }.join(' ')
+    inject([]){|acc, (k,v)|
+      acc << 
+        if v.respond_to?(:assoc) 
+          repeat k, v 
+        else
+          format "-%s %s", k, v 
+        end
+    }.join ' '
+  end
+  alias to_s to_str
+  
+  def repeat(k, v)
+    v.inject(''){|str, e|
+      str<<format( "-%s %s", k, e )
+    }
   end
 end
 
@@ -127,3 +139,22 @@ aud, vid = newvid.get_audio.render, newvid.get_video.render
   
 vid.add_audio(audio: FFMpeg.audio_pitch(aud.path, pitch:8).path ).render
 
+
+def h
+  { i: %w[ina.mp4 inb.mp4], 
+    ss: 300, 
+    'c:a': 'copy', 
+    map: '1:a' }
+end
+
+def ffmpeg(output:'')
+   h = yield 
+   [__method__, HString.new(h), output].join(' ')
+end
+
+res=
+ffmpeg output:'out.mp4' do
+  h
+end
+
+p res
