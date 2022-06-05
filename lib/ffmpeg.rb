@@ -31,6 +31,14 @@ class FFMpeg
     self
   end
 
+  def crop(in_w:3, extra:'-preset veryslow')
+    @type=__method__
+    @ext=ext
+    @cmd="ffmpeg -i '#{@path}' -filter:v 'crop=in_w/#{in_w}:in_h:in_w/#{in_w}:0'"
+    @cmd<<" #{extra} #{tempfile}"
+    self
+  end
+  
   def get_audio(ext:'.wav', extra:'-vn')
     cut(ext:, extra:)
     @type=__method__
@@ -69,7 +77,6 @@ class FFMpeg
     ___
     self
   end
-
 
   def render
     IO.popen(@cmd.gsub(/\n/,' '), &:read) if @cmd
