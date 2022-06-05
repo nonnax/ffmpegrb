@@ -8,10 +8,6 @@ class FFMpeg
     @path=path
   end
 
-  def inspect
-    @tempfile
-  end
-
   def tempfile
     @tempfile=File.join([@type, _basename(@path), @ext].compact.join('_'))
   end
