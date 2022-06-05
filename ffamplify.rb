@@ -1,8 +1,8 @@
 #!/usr/bin/env ruby
 # Id$ nonnax 2021-10-11 22:47:15 +0800
 # Used with lf file manager file selections
-require 'fzf'
-require 'file_ext'
+require 'rubytools/fzf'
+require 'rubytools/file_ext'
 
 text=[]
 ffprobe='ffmpeg -hide_banner -nostats -i {} -af "volumedetect" -vn -sn -dn -f null /dev/null'
@@ -28,6 +28,6 @@ Dir['*.*']
     -c:v copy
     'a_#{volume}_#{basename.to_safename}'
   FFMPEG
-  cmd.gsub!(/\n/,' ')
+  puts cmd.gsub!(/\n/,' ')
   IO.popen(cmd, &:read)
 end

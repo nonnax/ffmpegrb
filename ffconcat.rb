@@ -1,9 +1,10 @@
 #!/usr/bin/env ruby
 # Id$ nonnax 2021-09-29 00:54:52 +0800
 # ffmpeg -f concat -safe 0 -i concat.txt -c copy $of
-require 'fzf'
+# require 'rubytools/fzf'
 
-selected=Dir['*.*'].fzf
+# selected=Dir['*.*'].fzf
+selected=ARGV
 
 exit if selected.empty? 
 
@@ -13,5 +14,5 @@ end
 
 File.open('concat.txt', 'w'){|f| f.puts text.join("\n")}
 
-cmd="ffmpeg -f concat -safe 0 -i concat.txt -crf 23 vcat.mp4"
+cmd="ffmpeg -f concat -safe 0 -i concat.txt -crf 23 'vcat_#{selected.first}'"
 IO.popen(cmd, &:read)
