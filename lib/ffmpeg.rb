@@ -3,11 +3,21 @@
 require 'fileutils'
 require 'mote'
 
+class HString<SimpleDelegator
+  def to_str
+    inject([]){|acc, h|
+      acc<< "-%s %s" % h
+    }.join(' ')
+  end
+end
+
 class FFMpeg
   attr :path, :basename, :ext, :method
   def initialize(path=nil)
     @path=path
-    @basename, _, @ext = @path.rpartition('.')
+    @basename, _, @ext = @path.dup.rpartition('.')
+    @opts = { q:5, preset:'slow' }
+    @standard_opts = HString.new(@opts)
   end
 
   def tempfile
@@ -16,20 +26,21 @@ class FFMpeg
 
   def cut(ss:nil, to:nil, ext:nil, extra:'')
     @method=__method__
-    @ext=ext
+    @ext=ext if ext
 
     @cmd="ffmpeg -i '#{@path}'"
     @cmd<<" -ss #{ss}" if ss
     @cmd<<" -to #{to}" if to
+    @cmd<<@standard_opts
     @cmd<<" #{extra} {{tempfile}}"
     self
   end
 
   def crop(in_w:3, extra:'-preset veryslow')
     @method=__method__
-    @ext=ext
-    @cmd="ffmpeg -i '#{@path}' -filter:v 'crop=in_w/#{in_w}:in_h:in_w/#{in_w}:0'"
-    @cmd<<" #{extra} {{tempfile}}"
+    @cmd= "ffmpeg -i '#{@path}' -filter:v 'crop=in_w/#{in_w}:in_h:in_w/#{in_w}:0'"
+    @cmd<< @standard_opts
+    @cmd<< " #{extra} {{tempfile}}"
     self
   end
   
@@ -73,14 +84,16 @@ class FFMpeg
   end
 
   def render
-    cmd()
-    IO.popen(@cmd.gsub(/\n/,' '), &:read) if @cmd
+    cmd do |c|
+      IO.popen(c.gsub(/\n/,' '), &:read) 
+    end
     FFMpeg.new(@tempfile)
   end
 
   def cmd
+    return unless defined?(@cmd)
     mote=Mote.parse(@cmd, self, [:tempfile])
-    @cmd=mote.call(tempfile: )  
+    yield @cmd=mote.call(tempfile: )  
   end
 
   def save
