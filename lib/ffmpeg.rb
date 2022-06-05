@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 # Id$ nonnax 2022-06-05 11:35:55 +0800
 require 'fileutils'
-require 'erb'
+require 'mote'
 
 class FFMpeg
   attr :path, :basename, :ext, :method
@@ -21,7 +21,7 @@ class FFMpeg
     @cmd="ffmpeg -i '#{@path}'"
     @cmd<<" -ss #{ss}" if ss
     @cmd<<" -to #{to}" if to
-    @cmd<<" #{extra} #{tempfile}"
+    @cmd<<" #{extra} {{tempfile}}"
     self
   end
 
@@ -29,7 +29,7 @@ class FFMpeg
     @method=__method__
     @ext=ext
     @cmd="ffmpeg -i '#{@path}' -filter:v 'crop=in_w/#{in_w}:in_h:in_w/#{in_w}:0'"
-    @cmd<<" #{extra} #{tempfile}"
+    @cmd<<" #{extra} {{tempfile}}"
     self
   end
   
@@ -57,7 +57,7 @@ class FFMpeg
     @cmd=<<~___
       ffmpeg -i '#{@path}' -filter_complex 
         '[0:v]boxblur=luma_radius=#{radius}:chroma_radius=#{radius}:luma_power=1[blurred]' 
-        -map "[blurred]" -map 0:a '#{tempfile}'
+        -map '[blurred]' -map 0:a '{{tempfile}}'
     ___
     self
   end
@@ -67,14 +67,20 @@ class FFMpeg
     @cmd=<<~___
       ffmpeg -i '#{@path}' -filter_complex 
         '[0:v]fade=type=in:start_time=1:duration=#{duration}[fadein]' 
-        -map '[fadein]' -map 0:a '#{tempfile}'
+        -map '[fadein]' -map 0:a '{{tempfile}}'
     ___
     self
   end
 
   def render
+    cmd()
     IO.popen(@cmd.gsub(/\n/,' '), &:read) if @cmd
     FFMpeg.new(@tempfile)
+  end
+
+  def cmd
+    mote=Mote.parse(@cmd, self, [:tempfile])
+    @cmd=mote.call(tempfile: )  
   end
 
   def save
