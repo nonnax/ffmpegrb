@@ -1,6 +1,7 @@
 #!/usr/bin/env ruby
 # Id$ nonnax 2022-06-05 11:35:55 +0800
 require 'fileutils'
+require 'delegate'
 require 'mote'
 
 class HString<SimpleDelegator
@@ -24,12 +25,13 @@ class HString<SimpleDelegator
 end
 
 class FFMpeg
-  attr :path, :basename, :ext, :method
+  attr :path, :basename, :ext, :method, :help
   def initialize(path=nil)
     @path=path
     @basename, _, @ext = @path.dup.rpartition('.')
     @opts = { q:5, preset:'slow' }
     @standard_opts = HString.new(@opts)
+    @help = Hash.new
   end
 
   def tempfile
@@ -118,6 +120,68 @@ class FFMpeg
     cmd="rubberband -p #{pitch} #{f} #{outputf}"
     IO.popen(cmd, &:read)
     FFMpeg.new(outputf)
+  end
+
+  def self.ffmpeg(output:'')
+     h = yield 
+     [__method__, HString.new(h), output].join(' ')
+  end
+
+
+  def get_frames(**opts)   
+    params={
+      fps: 60,
+      per_second: 0.5,
+      scale: '1280:360'
+    }.merge(opts)
+
+    help[__method__]=<<~___
+        # usage:
+        params = #{params}
+        #{__method__}( params )
+    ___
+
+    return help[__method__] if params[:help]
+
+    outdir='frames'
+    FileUtils.mkdir(outdir) unless Dir.exist?(outdir)
+
+    params[:path] = @path    
+    params[:timeframe] = params[:fps]*params[:per_second]    
+    
+    cmd = %q(ffmpeg -i {{path}} -qscale:v 2 -vf "select='not(mod(n,{{timeframe}}))',setpts='N/({{fps}}*TB)',scale='{{scale}}'" -f image2 frames/frame_%04d.jpg 2>&1)
+
+    t = Mote.parse(cmd, self, params.keys)[params]
+    IO.popen( t, &:readlines).select{|e| (/input|output|stream/i).match?(e) }  
+  end
+  
+  def cat_frames(**opts)
+    params={
+        rate:60,
+        crf:20,
+        mp4:'frames_outfile',
+        scale: '1280:360'
+    }.merge(opts)
+
+    help[__method__]=<<~___
+        # usage:
+        params = #{params}
+        #{__method__}( params )
+    ___
+
+    return help[__method__] if params[:help]
+  
+    cmd = 'ffmpeg -r {{rate}} -i frames/frame_%04d.jpg -c:v libx264 -pix_fmt yuv420p -crf {{crf}} -r {{rate}} -vf scale="{{scale}}"  -y {{mp4}}.mp4 2>&1'
+
+    t=Mote.parse(cmd, self, params.keys)[params]
+
+    pp IO.popen(t, &:readlines).select{|e| (/input|output|stream/i).match?(e) }
+  
+  end
+  
+  def get_fps
+    info=IO.popen "ffprobe -show_entries format=duration #{@path} 2>&1", &:readlines
+    info.select{|e| /Stream/.match?(e)}.map(&:strip).join("\n")
   end
   
 end
