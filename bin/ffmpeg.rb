@@ -1,0 +1,1 @@
+/home/seti/github/ffmpegrb/lib/ffmpeg.rb
