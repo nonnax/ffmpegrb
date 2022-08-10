@@ -17,7 +17,7 @@ class HString<SimpleDelegator
         else
           format " -%s %s ", k, v 
         end
-    }.join(' ').tr('true', '').split.join(' ')
+    }.join(' ') #.tr('true', '') #.split.join(' ')
   end
   alias to_s to_str
   
@@ -50,22 +50,22 @@ class FFMpeg
     @method=__method__
     @ext=ext if ext
 
-    @cmd="ffmpeg -i '#{@path}'"
-    @cmd<<" -ss #{ss}" if ss
-    @cmd<<" -to #{to}" if to
+    @cmd="ffmpeg -i '#{@path}' "
+    @cmd<<" -ss #{ss} " if ss
+    @cmd<<" -to #{to} " if to
     @cmd<<@standard_opts
     @cmd<<" #{extra} {{tempfile}}"
-    pp self
+    self
   end
   
-  def get_audio(ext:'wav', extra:'-vn')
+  def get_audio(ext:'wav', extra:' -vn')
     cut(ext:, extra:)
     @method=__method__
     self
   end
   
   # def get_video(ext:'mp4', extra:'-an -pix_fmt yuv420p -f yuv4mpegpipe -frames:v 25 ')
-  def get_video(ext:'mp4', extra:'-an -pix_fmt yuv420p')
+  def get_video(ext:'mp4', extra:' -an -pix_fmt yuv420p')
     cut(ext:, extra: )
     @method=__method__
     self
@@ -79,7 +79,7 @@ class FFMpeg
       -c:v copy #{extra} 
       #{tempfile}
     }
-    @cmd.gsub!(/\n{1,}, ''/)
+    @cmd.gsub!(/\n{1,}, ' '/)
     @cmd<<' '+ext if ext
     self
   end
