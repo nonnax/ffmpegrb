@@ -7,12 +7,7 @@ f, = ARGV
 
 description=File.read(f)
 
-a, b = description.split(/\n{2,}/)
-
-a1=a.split(/\s(?:;)?/).join(" ").split.join(' ')
-b1=b.split(/\s(?:;)?/).join(" ").split.join(' ')
-
-description = [a1, b1].join("\n\n")
+description.gsub!(/\n/, ' ').split.join(' ')
 
 rules = {
   brackets:{
