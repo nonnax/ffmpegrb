@@ -6,13 +6,16 @@
 # selected=Dir['*.*'].fzf
 selected=ARGV
 
-exit if selected.empty? 
-
+if selected.empty?
+  puts __FILE__+" <file1> <file2> <file2> ..."
+  exit
+end
 text=selected.map do |e|
    "file '#{e}'"
 end
 
 File.open('concat.txt', 'w'){|f| f.puts text.join("\n")}
 
-cmd="ffmpeg -f concat -safe 0 -i concat.txt -crf 23 'vcat_#{selected.first}'"
+cmd="ffmpeg -f concat -safe 0 -i concat.txt -crf 24 -c:v libx265 'vcat_#{selected.first}'"
 IO.popen(cmd, &:read)
+

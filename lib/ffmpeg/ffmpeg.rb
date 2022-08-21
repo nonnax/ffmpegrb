@@ -34,7 +34,7 @@ class FFMpeg
   def initialize(path=nil)
     @path=path
     @basename, _, @ext = @path.dup.rpartition('.')
-    @opts = {  preset:'slow' }
+    @opts = {  crf:20, preset:'slow' }
     @standard_opts = HString.new(@opts)
     @help = Hash.new
   end

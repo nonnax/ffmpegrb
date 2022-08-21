@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 # Id$ nonnax 2022-08-10 10:25:23
 require 'json'
-require_relative 'lib/ffmpeg/ffmpeg'
+require 'ffmpeg/ffmpeg'
 # `ffmpeg -i Archive_81_Season_1_Episode_1_Mystery_Signals_Full_HD_online.mp4 -ss 00:24:19.750 -to 00:26:19.792 -an automata.mp4`
 # `ffmpeg -i Archive_81_Season_1_Episode_1_Mystery_Signals_Full_HD_online.mp4 -ss 00:24:19.750 -to 00:26:19.792 -vn automata.wav`
 conf=JSON.parse(File.read('rubberize.json'), symbolize_names:true)
