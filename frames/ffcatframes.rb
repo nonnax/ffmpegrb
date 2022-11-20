@@ -9,8 +9,9 @@ params={
   scale: '1280:360'
   }
 
-cmd='ffmpeg -r {{rate}} -i frames/frame_%04d.jpg -c:v libx264 -pix_fmt yuv420p -crf {{crf}} -r {{rate}} -vf scale="{{scale}}"  -y {{mp4}}.mp4 2>&1'
+# cmd='ffmpeg -r {{rate}} -i frames/frame_%04d.jpg -c:v libx264 -pix_fmt yuv420p -crf {{crf}} -r {{rate}} -vf scale="{{scale}}"  -y {{mp4}}.mp4 2>&1'
+cmd=File.read('frames.md').gsub(/\n/,' ').strip
 
-t=Mote.parse(cmd, self, params.keys)[params]
+p t=Mote.parse(cmd, self, params.keys)[params]
 
-pp IO.popen(t, &:readlines).select{|e| (/input|output|stream/i).match?(e) }
+# pp IO.popen(t, &:readlines).select{|e| (/input|output|stream/i).match?(e) }
