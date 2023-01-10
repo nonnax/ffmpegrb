@@ -16,5 +16,5 @@ end
 
 desc "install ffmpegrb-x.x.x.gem"
 task install: %w[build] do
-  sh "sudo gem install $(ls ffmpegrb-*.gem)"
+  sh "gem install $(ls ffmpegrb-*.gem)"
 end

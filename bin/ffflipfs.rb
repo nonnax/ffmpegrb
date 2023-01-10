@@ -1,7 +1,6 @@
 #!/usr/bin/env ruby
 # Id$ nonnax 2021-10-26 23:51:26 +0800
 # "ffmpeg -i INPUT -vf vflip -c:a copy OUTPUT"
-require 'fiber_scheduler'
 
 def flip(inf, flip:'hflip')
   cmd=<<~FFMPEG
@@ -17,11 +16,7 @@ def flip(inf, flip:'hflip')
   IO.popen(cmd, &:read)
 end
 
-FiberScheduler do
-  ENV['fs'].split(/\n/).each do |e|
-    Fiber.schedule do
-      fname=File.basename(e)
-      flip(fname)
-    end
-  end
+ENV['fs'].split(/\n/).each do |e|
+    fname=File.basename(e)
+    flip(fname)
 end

@@ -4,9 +4,10 @@
 # concut.rb
 #   an ffmpeg tool to cut and merge sections from a single input
 # -*- nonnax  -*- : 2021-09-30 01:37:01 +0800
+require 'rubytools'
 require 'fzf'
-require 'arraycsv'
-require 'file_ext' # String#to_safename
+require 'array_csv'
+require 'file/file_ext' # String#to_safename
 
 
 p inf = Dir['*.*'].fzf.first
