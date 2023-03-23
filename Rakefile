@@ -10,7 +10,7 @@ task :bundle do
 end
 
 desc "Build the ffmpegrb.gem file"
-task build: %w[bundle] do
+task :build do
   sh "gem build ffmpegrb.gemspec"
 end
 
