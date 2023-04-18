@@ -10,7 +10,8 @@ require 'array_csv'
 require 'file/file_ext' # String#to_safename
 
 
-p inf = Dir['*.*'].fzf.first
+inf, = ARGV
+inf = Dir['*.*'].fzf.first unless inf
 
 exit unless inf
 

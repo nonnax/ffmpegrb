@@ -4,6 +4,16 @@ require 'texticle/texticle'
 require 'file/file_importer'
 require 'time/time_ext'
 
+# FFMpeg
+# ffmpeg templater
+# usage: ffmpeg.rb template_file, key value key2 value2
+# uses Texticle and FileImporter
+# use @import 'partial'
+# note: any shell command can also be used in the template
+# multiple shell commands are separated by `&&` as usual
+# useful template commands:
+# basename(fname), ts(timestring) for timestamp math, in addition to all public ruby methods
+#
 class FFMpeg
   attr :cmd
   def initialize(f, **params)

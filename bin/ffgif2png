@@ -1,0 +1,2 @@
+#!/usr/bin/env shell
+ffmpeg -i {i} -vsync 0 {i}%04d.png
